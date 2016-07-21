@@ -47,8 +47,24 @@ class MysqlAnalyse extends Model
 		$ss->initTables($src);
 		$tt = new mysqlAna();
 		$tt->initTables($target);
-		var_dump($this->analyseDiff($ss->getTables(),$tt->getTables()));
-		return array();
+		$differences = $this->analyseDiff($ss->getTables(),$tt->getTables());
+		$result = array();
+		$num = 0;
+		foreach($differences as $key=>$difference){
+			if($key == "newTables"){
+				foreach($difference as $tableName=>$tableData){
+					$item = array();
+					$num += 1;
+					$item['number'] = $num;
+					$item['type'] = 'new Table';
+					$item['name'] = $tableName;
+					$item['status'] = "正常";
+					$item['sqlQuery'] = $this->mysqlGenerator("newTables",$tableData);
+					$result[] = $item;
+				}
+			}
+		}
+		return $result;
 	}
 
 	public function analyseDiff($source, $target){
@@ -189,6 +205,90 @@ class MysqlAnalyse extends Model
 					$result[$key] = $sourceField;
 				}
 			}
+		}
+
+		return $result;
+	}
+
+	public function mysqlGenerator($type="newTables",$data=array()){
+		$result = '';
+
+		switch($type){
+			case "newTables":
+				$result = $data["createSql"];
+				break;
+			case "newIndexes":
+				if(isset($data['tableName'])&&isset($data['newIndexes'])){
+					$indexArr = $data['newIndexes'];
+					if(count($indexArr)>0){
+						foreach($indexArr as $indexName=>$value){
+							if(isset($value['field'])) {
+								$fields = implode(",", $value['field']);
+								$indexType = isset($value['properties'])? $value['properties']:"INDEX";
+								$result .= "CREATE $indexType ON {$data['tableName']} ($fields);";
+							}
+						}
+					}
+				}
+				break;
+			case "newFields":
+//				ALTER TABLE  `users` ADD  `token` VARCHAR( 255 ) CHARACTER SET utf8 COLLATE utf8_general_ci NULL DEFAULT NULL COMMENT  '返回给客户端token登入识别码',
+//ADD  `token_time` DATETIME NULL DEFAULT NULL COMMENT  'token存入时间',
+//ADD  `is_owner` TINYINT( 3 ) UNSIGNED NOT NULL DEFAULT  '0' COMMENT  '是否是大区或城市或战区负责人，1代表是，其他情况以及其他职位统统为0',
+//ADD  `hr_staff_id` INT( 11 ) NOT NULL DEFAULT  '0' COMMENT  'hr系统staff的id';
+				if(isset($data['tableName'])&&isset($data['newFields'])){
+					$fieldArr = $data['newFields'];
+					if(count($fieldArr)>0){
+//						ALTER TABLE `test` ADD `test`
+// INT(11) UNSIGNED NOT NULL DEFAULT '0' COMMENT 'dddd' AFTER `of`;
+						foreach($fieldArr as $fieldName=>$value){
+							$res = "ALTER TABLE `{$data['tableName']}` ";
+							$res .= "ADD `$fieldName` ";
+							if(isset($value['type'])&&$value['type']!=''){
+								$res .= strtoupper($value['type']);
+							}
+							if(isset($value['length'])&&$value['length']!=''){
+								$res .= " (".strtotime($value['length']).") ";
+							}
+							if(isset($value['UNSIGNED'])&&$value['UNSIGNED']){
+								$res .= " UNSIGNED  ";
+							}
+							if(isset($value["NOT NULL"])&&$value["NOT NULL"]){
+								$res .= " NOT NULL ";
+							}
+							if(isset($value["DEFAULT"])&&$value["DEFAULT"]!=''){
+								$res .= " DEFAULT {$value["DEFAULT"]} ";
+							}
+							if(isset($value["COMMENT"])&&$value["COMMENT"]!=''){
+								$res .= " COMMENT {$value["COMMENT"]} ";
+							}
+							$result .= $res.";";
+						}
+					}
+				}
+				break;
+			case "newProperties":
+				break;
+			case "deletedTables":
+				break;
+			case "deletedIndexes":
+				break;
+			case "deletedFields":
+				break;
+			case "deletedProperties":
+				break;
+			case "modifiedTables":
+				break;
+			case "modifiedFields":
+				break;
+			case "modifiedIndexes":
+				break;
+			case "modifiedProperties":
+				break;
+			case "modifiedTableProperties":
+				break;
+			default:
+				break;
 		}
 
 		return $result;

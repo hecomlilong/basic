@@ -68,9 +68,9 @@ if(isset($test)){
                         <td><a data-target="#detailModal" data-toggle="modal" href="#" class='btn btn-xs btn-primary'><span class='glyphicon glyphicon-book'></span>执行</a></td>
                         <?php }}?>
                     </tr>
-                    <tr>
-                        <td  style="text-align:right" colspan='6'><?php echo $pager;?></td>
-                    </tr>
+<!--                    <tr>-->
+<!--                        <td  style="text-align:right" colspan='6'>--><?php //echo $pager;?><!--</td>-->
+<!--                    </tr>-->
                     </tbody>
                 </table>
 

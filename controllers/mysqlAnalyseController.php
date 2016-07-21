@@ -5,6 +5,7 @@ use Yii;
 use app\models\MysqlAnalyse;
 use yii\web\Controller;
 use yii\web\UploadedFile;
+use yii\data\Pagination;
 
 class MysqlanalyseController extends Controller
 {
