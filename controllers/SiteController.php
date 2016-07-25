@@ -45,6 +45,10 @@ class SiteController extends Controller
                 'class' => 'yii\captcha\CaptchaAction',
                 'fixedVerifyCode' => YII_ENV_TEST ? 'testme' : null,
             ],
+            'static' => [
+                'class' => 'yii\web\ViewAction',
+                'viewPrefix' => 'static',
+            ],
         ];
     }
 
@@ -106,5 +110,13 @@ class SiteController extends Controller
             Yii::$app->session->setFlash('success','you have entered the data successfully.');
         }
         return $this->render("userForm",['model'=>$model]);
+    }
+
+    public function actionHelloWorld() {
+        $nameToDisplay = Yii::$app->request->get('nameToDisplay');
+// Equivalent to
+// $nameToDisplay = isset($_GET['nameToDisplay'])?$_GET['nameToDisplay']:null;
+        return $this->render('helloWorld',
+            [ 'nameToDisplay' => $nameToDisplay ] );
     }
 }
