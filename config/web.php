@@ -42,6 +42,8 @@ $config = [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
             'rules' => [
+                'news/<year:\d{4}>/items-list2' => ' news/items-list2',
+                 'news/<category:\w+>/items-list2' => 'test-rules/items-list2',
             ],
         ],
     ],
