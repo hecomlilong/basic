@@ -10,7 +10,7 @@ class News1Controller extends Controller
 {
 // 4. actions are handled from controller functions whose name starts with 'action' and the first letter of each word is uppercase;
 	public function actionIndex() {
-		echo "this is my first controller";
+		return $this->render('index');
 	}
 
 	//new test
