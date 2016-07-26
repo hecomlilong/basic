@@ -250,7 +250,7 @@ class MysqlAnalyse extends Model
 			$res .= " ".strtoupper($value['type']);
 		}
 		if(isset($value['length'])&&$value['length']!=''){
-			$res .= " (".strtotime($value['length']).")";
+			$res .= " ({$value['length']})";
 		}
 		if(isset($value['UNSIGNED'])&&$value['UNSIGNED']){
 			$res .= " UNSIGNED";
@@ -301,6 +301,7 @@ class MysqlAnalyse extends Model
 		switch($type){
 			case "newTables":
 				$result = $data["createSql"];
+				$result = preg_replace('/AUTO_INCREMENT[ ]{0,}=[ ]{0,}\d+/i','',$result);
 				break;
 			case "newIndexes":
 //				alter table table_name add index index_name (column_list) ;
