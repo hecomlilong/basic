@@ -55,43 +55,47 @@ class MysqlAnalyse extends Model
 			foreach($difference as $tableName=>$tableData){
 				if($key == "newTables"){
 					$sqlQuery = $this->mysqlGenerator($key,array("tableName"=>$tableName,"createSql"=>$tableData["createSql"]));
-					if($sqlQuery!='') {
-						$item = array();
-						$num += 1;
-						$item['number'] = $num;
-						$item['type'] = $key;
-						$item['name'] = $tableName;
-						$item['status'] = "正常";
-						$item['sqlQuery'] = $sqlQuery;
-						$result[] = $item;
+					if(is_array($sqlQuery)) {
+						foreach ($sqlQuery as $sqlQueryItem) {
+							$item = array();
+							$num += 1;
+							$item['number'] = $num;
+							$item['type'] = $key;
+							$item['name'] = $tableName;
+							$item['status'] = "正常";
+							$item['sqlQuery'] = $sqlQueryItem;
+							$result[] = $item;
+						}
 					}
 				}elseif($key == "modifiedTables"){
 					foreach($tableData as $modifiedKey=>$modifiedItem){
 						if($modifiedKey=="modifiedFields"){
-							foreach ($modifiedItem as $fieldName=>$item) {
-								$sqlQuery = $this->mysqlGenerator($modifiedKey, array("tableName" => $tableName, $modifiedKey => $modifiedItem));
-								if($sqlQuery!='') {
+							$sqlQuery = $this->mysqlGenerator($modifiedKey, array("tableName" => $tableName, $modifiedKey => $modifiedItem));
+							if(is_array($sqlQuery)) {
+								foreach ($sqlQuery as $innerKey=>$sqlQueryItem) {
 									$item = array();
 									$num += 1;
 									$item['number'] = $num;
 									$item['type'] = $modifiedKey;
 									$item['name'] = $tableName;
 									$item['status'] = "正常";
-									$item['sqlQuery'] = $sqlQuery;
+									$item['sqlQuery'] = $sqlQueryItem;
 									$result[] = $item;
 								}
 							}
 						}else {
 							$sqlQuery = $this->mysqlGenerator($modifiedKey, array("tableName" => $tableName, $modifiedKey => $modifiedItem));
-							if($sqlQuery!='') {
-								$item = array();
-								$num += 1;
-								$item['number'] = $num;
-								$item['type'] = $modifiedKey;
-								$item['name'] = $tableName;
-								$item['status'] = "正常";
-								$item['sqlQuery'] = $sqlQuery;
-								$result[] = $item;
+							if(is_array($sqlQuery)) {
+								foreach ($sqlQuery as $sqlQueryItem) {
+									$item = array();
+									$num += 1;
+									$item['number'] = $num;
+									$item['type'] = $modifiedKey;
+									$item['name'] = $tableName;
+									$item['status'] = "正常";
+									$item['sqlQuery'] = $sqlQueryItem;
+									$result[] = $item;
+								}
 							}
 						}
 					}
@@ -207,31 +211,31 @@ class MysqlAnalyse extends Model
 				$newProperties = array_diff_key($sourceField, $target[$key]);
 				if (count($newProperties) > 0) {
 					$result[$key] = array("newProperties" => array("diff"=>$newProperties,"all"=>$sourceField));
-				}
+				}else{
 
-				$deletedProperties = array_diff_key($target[$key], $sourceField);
+					$deletedProperties = array_diff_key($target[$key], $sourceField);
 
-				if (count($deletedProperties) > 0) {
-					if (isset($result[$key])) {
-						$result[$key]["deletedProperties"] = array("diff"=>$deletedProperties,"all"=>$target[$key]);
-					} else {
-						$result[$key] = array("deletedProperties" => array("diff"=>$deletedProperties,"all"=>$target[$key]));
-					}
-				}
-
-
-				$modifiedProperties = array();
-				$intersectProperties = array_intersect_key($sourceField, $target[$key]);
-				foreach ($intersectProperties as $innerKey => $intersectProperty) {
-					if ($intersectProperty != $target[$key][$innerKey]) {
-						$modifiedProperties[$innerKey] = $intersectProperty;
-					}
-				}
-				if (count($modifiedProperties) > 0) {
-					if (isset($result[$key])) {
-						$result[$key]["modifiedProperties"] = array("diff"=>$modifiedProperties,"all"=>$sourceField);
-					} else {
-						$result[$key] = array("modifiedProperties" => array("diff"=>$modifiedProperties,"all"=>$sourceField));
+					if (count($deletedProperties) > 0) {
+						if (isset($result[$key])) {
+							$result[$key]["deletedProperties"] = array("diff" => $deletedProperties, "all" => $target[$key]);
+						} else {
+							$result[$key] = array("deletedProperties" => array("diff" => $deletedProperties, "all" => $target[$key]));
+						}
+					}else {
+						$modifiedProperties = array();
+						$intersectProperties = array_intersect_key($sourceField, $target[$key]);
+						foreach ($intersectProperties as $innerKey => $intersectProperty) {
+							if ($intersectProperty != $target[$key][$innerKey]) {
+								$modifiedProperties[$innerKey] = $intersectProperty;
+							}
+						}
+						if (count($modifiedProperties) > 0) {
+							if (isset($result[$key])) {
+								$result[$key]["modifiedProperties"] = array("diff" => $modifiedProperties, "all" => $sourceField);
+							} else {
+								$result[$key] = array("modifiedProperties" => array("diff" => $modifiedProperties, "all" => $sourceField));
+							}
+						}
 					}
 				}
 			}else{
@@ -274,7 +278,10 @@ class MysqlAnalyse extends Model
 			// VARCHAR(11) UNSIGNED
 			// CHARACTER SET utf8 COLLATE utf8_general_ci
 			// NOT NULL DEFAULT '0' COMMENT 'ddd';
-
+//if(!isset($data[$type])){
+//	echo "<br>";
+//	var_dump($data);exit;
+//}
 			$propertiesArr = $data[$type];
 			if(count($propertiesArr)>0&&isset($propertiesArr['diff'])&&count($propertiesArr['diff'])>0){
 				if(isset($propertiesArr['all'])&&is_array($propertiesArr['all'])) {
@@ -291,7 +298,7 @@ class MysqlAnalyse extends Model
 	}
 
 	public function mysqlGenerator($type="newTables",$data=array()){
-		$result = '';
+		$result = array();
 		if(isset($data['tableName'])&&$data['tableName']!=''){
 			$tableName = $data['tableName'];
 		}else{
@@ -300,8 +307,7 @@ class MysqlAnalyse extends Model
 
 		switch($type){
 			case "newTables":
-				$result = $data["createSql"];
-				$result = preg_replace('/AUTO_INCREMENT[ ]{0,}=[ ]{0,}\d+/i','',$result);
+				$result[] = preg_replace('/AUTO_INCREMENT[ ]{0,}=[ ]{0,}\d+/i','',$data["createSql"]);
 				break;
 			case "newIndexes":
 //				alter table table_name add index index_name (column_list) ;
@@ -318,7 +324,7 @@ class MysqlAnalyse extends Model
 									$indexType .= " KEY";
 								}
 //								$result .= "CREATE $indexType $indexName ON `$tableName` ($fields);";
-								$result .= "ALTER TABLE $tableName ADD $indexType $indexName ($fields);";
+								$result [] = "ALTER TABLE $tableName ADD $indexType $indexName ($fields);";
 							}
 						}
 					}
@@ -339,17 +345,17 @@ class MysqlAnalyse extends Model
 							$res .= " ADD `$fieldName`";
 							$propSql = $this->getPropertyChangeSql($value);
 							if($propSql!=''){
-								$result .= $res.$propSql.";";
+								$result [] = $res.$propSql.";";
 							}
 						}
 					}
 				}
 				break;
 			case "newProperties":
-				$result = $this->getPropertySql($data,"newProperties",$tableName);
+				$result [] = $this->getPropertySql($data,"newProperties",$tableName);
 				break;
 			case "deletedTables":
-				$result = "DROP TABLE `$tableName`;";
+				$result [] = "DROP TABLE `$tableName`;";
 				break;
 			case "deletedIndexes":
 //				drop index index_name on table_name ;
@@ -363,7 +369,7 @@ class MysqlAnalyse extends Model
 							if($indexType=='PRIMARY'){
 								$indexType .= " KEY";
 							}
-							$result .= "ALTER TABLE $tableName DROP $indexType $indexName;";
+							$result [] = "ALTER TABLE $tableName DROP $indexType $indexName;";
 						}
 					}
 				}
@@ -372,17 +378,30 @@ class MysqlAnalyse extends Model
 				if(isset($data['deletedFields'])&&is_array($data['deletedFields'])){
 					if(count($data['deletedFields'])>0){
 						foreach ($data['deletedFields'] as $fieldName=>$deletedField) {
-							$result .= "ALTER TABLE $tableName DROP COLUMN $fieldName;";
+							$result [] = "ALTER TABLE $tableName DROP COLUMN $fieldName;";
 						}
 					}
 				}
 				break;
 			case "deletedProperties":
-				$result = $this->getPropertySql($data,"deletedProperties",$tableName);
+				$result[] = $this->getPropertySql($data,"deletedProperties",$tableName);
 				break;
 			case "modifiedTables":
 				break;
 			case "modifiedFields":
+				if(isset($data['modifiedFields'])&&is_array($data['modifiedFields'])){
+					foreach($data['modifiedFields'] as $fieldName=>$value){
+						$subFields = array("modifiedProperties","newProperties","deletedProperties");
+						foreach ($subFields as $subField) {
+							if(array_key_exists($subField,$value)) {
+								$value['tableName'] = $tableName;
+								$value['fieldName'] = $fieldName;
+								$res = $this->mysqlGenerator($subField, $value);
+								$result = array_merge($res, $result);
+							}
+						}
+					}
+				}
 				break;
 			case "modifiedIndexes":
 //				alter table table_name add index index_name (column_list) ;
@@ -390,7 +409,9 @@ class MysqlAnalyse extends Model
 //              alter table table_name add primary key (column_list) ;
 				break;
 			case "modifiedProperties":
-				$result = $this->getPropertySql($data,"modifiedProperties",$tableName);
+				if(isset($data['fieldName'])&&isset($data['tableName'])) {
+					$result[] = $this->getPropertySql($data, "modifiedProperties", $tableName);
+				}
 				break;
 			case "modifiedTableProperties":
 				//ALTER TABLE `test` COMMENT = 'ffff';
@@ -402,7 +423,7 @@ class MysqlAnalyse extends Model
 					$res .= " $key = $value";
 				}
 				if($res != '') {
-					$result .= "ALTER TABLE `$tableName` $res;";
+					$result []= "ALTER TABLE `$tableName` $res;";
 				}
 				break;
 			case "newTableProperties":
@@ -414,7 +435,7 @@ class MysqlAnalyse extends Model
 					$res .= " $key = $value";
 				}
 				if($res != '') {
-					$result .= "ALTER TABLE `$tableName` $res;";
+					$result []= "ALTER TABLE `$tableName` $res;";
 				}
 				break;
 			case "deletedTableProperties":

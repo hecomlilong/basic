@@ -1,0 +1,101 @@
+－系统检索到的相关文档（Ａ）
+- 系统检索到的不相关文档（Ｂ）
+- 相关但是系统没有检索到的文档（Ｃ）
+- 不相关也未被系统检索到的文档（Ｄ）
+
+召回率Ｒ：用检索到相关文档数作为分子，所有相关文档总数作为分母，即 R=A/(A+C)
+精度Ｐ： 用检索到相关文档数作为分子，所有检索到的文档总数作为分母．即  P=A/(A+B).
+
+
+A＝
+B＝
+C＝
+D＝
+
+Ground-truth
+
+1, ALTER TABLE `cache_day` CHANGE `yeji` `yeji` decimal (10,2) NOT NULL COMMENT '业绩';
+
+2, ALTER TABLE `cache_day` ADD `peixun` INT (11) NOT NULL DEFAULT '0' COMMENT '培训';
+
+3, ALTER TABLE `cache_day_leader` CHANGE `yeji` `yeji` decimal (10,2) NOT NULL COMMENT '业绩';
+
+4, CREATE TABLE IF NOT EXISTS `cache_month` ( `id` int(11) NOT NULL AUTO_INCREMENT, `userid` int(11) NOT NULL, `area_id` int(11) NOT NULL COMMENT '区域或战区ID', `month` int(11) NOT NULL COMMENT 'YYYYMM', `ziliao` int(11) NOT NULL COMMENT '资料量', `dianhua` int(11) NOT NULL COMMENT '电话量', `yuefang` int(11) NOT NULL COMMENT '约访量', `baifang` int(11) NOT NULL COMMENT '拜访数', `yeji` decimal(10,2) NOT NULL COMMENT '业绩', `lidan1` int(11) NOT NULL, `lidancount1` int(11) NOT NULL, `lidan0` int(11) NOT NULL, `lidancount0` int(11) NOT NULL, `lidan2` int(11) NOT NULL, `lidancount2` int(11) NOT NULL, `lidan3` int(11) NOT NULL, `lidancount3` int(11) NOT NULL, `lidan4` int(11) NOT NULL, `lidancount4` int(11) NOT NULL, `lidan5` int(11) NOT NULL, `lidancount5` int(11) NOT NULL, `lidan6` int(11) NOT NULL, `lidancount6` int(11) NOT NULL, `lasttime` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '最后更新时间', PRIMARY KEY (`id`), KEY `userid` (`userid`), KEY `month` (`month`), KEY `userid_2` (`userid`,`month`), KEY `yeji` (`yeji`) ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COMMENT='业务员工作统计表-缓存数据-月度' ;
+
+5, ALTER TABLE `cache_org` CHANGE `yeji` `yeji` decimal (10,2) NOT NULL COMMENT '业绩';
+6, CREATE TABLE IF NOT EXISTS `calllog` ( `id` int(11) NOT NULL AUTO_INCREMENT, `cusid` int(11) NOT NULL DEFAULT '0' COMMENT '客户ID', `contactorid` int(11) NOT NULL DEFAULT '0' COMMENT '联系人ID', `userid` int(11) NOT NULL, `realname` varchar(25) DEFAULT NULL COMMENT '姓名', `calling` varchar(25) NOT NULL COMMENT '主叫方', `called` varchar(255) DEFAULT NULL COMMENT '被叫方；多个被叫用逗号分隔', `day` int(11) NOT NULL COMMENT 'YYYYMMDD', `month` int(11) NOT NULL COMMENT '月', `sessionid` varchar(64) DEFAULT NULL, `ctime` datetime NOT NULL, `type` varchar(5) NOT NULL DEFAULT 'false' COMMENT '//false:用友 true:容联', `duration` int(11) NOT NULL DEFAULT '0' COMMENT '通话时长秒', `recordurl` varchar(255) DEFAULT NULL COMMENT '录音URL', `res` text, `usertype` tinyint(1) NOT NULL DEFAULT '0' COMMENT '0:客户 1：下属', `iscancel` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否取消，0：否，1：是', `cancelres` text COMMENT '取消返回值', PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='用友电话记录' ;
+7, ALTER TABLE `callrecord` ADD `isrecord` TINYINT (1) NOT NULL COMMENT '0没有录音；1有录音';
+8, ALTER TABLE `callrecord` ADD `recordurl` VARCHAR (255) NOT NULL COMMENT '客户录音地址';
+9, ALTER TABLE `callrecord` ADD `record_id` INT (11) NOT NULL COMMENT '对CALLRECORDING表ID';
+10, ALTER TABLE callrecord ADD INDEX idx_create_time (create_time);
+11, ALTER TABLE callrecord ADD INDEX record_id (record_id);
+12, CREATE TABLE IF NOT EXISTS `callrecording` ( `id` int(11) NOT NULL AUTO_INCREMENT, `cusid` int(11) DEFAULT NULL COMMENT '客户ID', `uid` int(11) DEFAULT NULL COMMENT 'UID', `contactorid` int(11) DEFAULT NULL COMMENT '联系人id ', `callsid` varchar(64) DEFAULT NULL COMMENT '返回的callsid', `calling` varchar(255) DEFAULT NULL COMMENT '主叫方电话', `called` varchar(255) DEFAULT NULL COMMENT '被叫方；多个被叫用逗号分隔', `duration` int(11) DEFAULT '0' COMMENT '电话时长', `recordurl` varchar(255) DEFAULT NULL COMMENT '录音URl', `oss_recordurl` varchar(255) DEFAULT NULL COMMENT '存储在oss上的录音地址', `oss_times` int(11) DEFAULT '0' COMMENT '想oss转存的次数，大于3次时不再进行转存操作', `usertype` tinyint(1) DEFAULT '0' COMMENT '0：客户 1：下属', `create_time` datetime DEFAULT NULL COMMENT '创建时间', `call_status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '呼叫状态 0：通话结束， 1：通话中', `status_time` datetime DEFAULT NULL COMMENT '状态对应时间', PRIMARY KEY (`id`), KEY `cusid` (`cusid`), KEY `create_time` (`create_time`) ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ;
+13, ALTER TABLE callrecord DROP INDEX create_time;
+14, CREATE TABLE IF NOT EXISTS `conference_meeting` ( `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id', `meeting_name` varchar(100) NOT NULL DEFAULT '' COMMENT '会议名称', `start_time` date DEFAULT NULL COMMENT '会议开始时间', `create_time` datetime NOT NULL COMMENT '创建时间', `is_open` tinyint(1) NOT NULL DEFAULT '0' COMMENT '会议是否已开始：2,确认完成；1，已开始；0，未开始', `invited_num` int(11) NOT NULL DEFAULT '0' COMMENT '邀请客户数', `attend_num` int(11) NOT NULL DEFAULT '0' COMMENT '已参加客户数', `absent_num` int(11) NOT NULL DEFAULT '0' COMMENT '未参加客户数', PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='PC端电话录入增加选项“邀请会议"需求' ;
+15, ALTER TABLE `contract_money` CHANGE `money` `money` decimal (10,2) NOT NULL COMMENT '金额';
+16, ALTER TABLE `contract_money` ENGINE = InnoDB;
+17, ALTER TABLE `contract_money_detail` CHANGE `money` `money` decimal (10,2) NOT NULL COMMENT '回款总金额';
+18, ALTER TABLE `contract_money_detail` CHANGE `newmoney` `newmoney` decimal (10,2) NOT NULL COMMENT '新增回款额';
+19, ALTER TABLE `contract_money_detail` CHANGE `remoney` `remoney` decimal (10,2) NOT NULL COMMENT '续费汇款额';
+20, ALTER TABLE `contract_money_detail` CHANGE `devmoney` `devmoney` decimal (10,2) NOT NULL COMMENT '设备金额';
+21, ALTER TABLE `contracts` CHANGE `devmoney` `devmoney` decimal (10,2) DEFAULT NULL COMMENT '设备总额';
+22, ALTER TABLE `contracts` CHANGE `sermoney` `sermoney` decimal (10,2) DEFAULT NULL COMMENT '服务总额';
+23, ALTER TABLE `contracts` CHANGE `htmoney` `htmoney` decimal (10,2) DEFAULT NULL COMMENT '合同总额';
+24, ALTER TABLE `contracts` CHANGE `returnmoney` `returnmoney` decimal (10,2) NOT NULL COMMENT '回款总额';
+25, CREATE TABLE IF NOT EXISTS `customers` ( `id` int(11) NOT NULL AUTO_INCREMENT, `cusname` varchar(128) DEFAULT NULL COMMENT '客户名称', `cusname_idx` varchar(255) DEFAULT NULL, `pinyin` varchar(255) NOT NULL COMMENT '拼音全拼', `py` varchar(100) NOT NULL COMMENT '拼音首字母', `linkman` varchar(64) DEFAULT NULL COMMENT '联系人', `corp` varchar(64) DEFAULT NULL COMMENT '法人', `telephone` varchar(64) DEFAULT NULL COMMENT '电话', `position` varchar(50) DEFAULT NULL COMMENT '职位', `capital` varchar(64) DEFAULT NULL COMMENT '注册资金', `trade` int(2) DEFAULT '0' COMMENT '行业', `terminals` smallint(4) NOT NULL, `create_time` datetime DEFAULT NULL COMMENT '创建时间', `update_time` datetime DEFAULT NULL COMMENT '客户最后一次操作时间', `safedays` int(2) DEFAULT NULL COMMENT '保护期', `operator` int(11) DEFAULT NULL COMMENT '录入人', `province` smallint(5) NOT NULL COMMENT '省市', `isarea` int(11) DEFAULT NULL COMMENT '办公区域', `status` int(11) DEFAULT NULL COMMENT '0=新录入 1=未绕到负责人 2=绕到负责人 3=约到负责人 4=拜访客户 5=理单客户 6=预测客户 7=申请合同 8=签单客户 9=完成客户', `linkcase` int(11) DEFAULT NULL COMMENT 'configlist', `type` int(11) DEFAULT NULL COMMENT '客户类型：公海=1 私海=2 开放池=3 待定池=4', `ownerid` int(11) DEFAULT NULL COMMENT '业务员', `mylevel` varchar(10) DEFAULT '无' COMMENT '个人理单评级', `managerlevel` varchar(10) DEFAULT '无' COMMENT '经理理单评级', `callrecord` text COMMENT '最后一次电话记录', `visitrecord` text COMMENT '最后一次拜访记录', `indirectreport` text COMMENT '最后一次业务指导记录', `remark` text COMMENT '备注', `into_time` datetime DEFAULT NULL COMMENT '客户流入日期', `callcount` int(11) DEFAULT '0' COMMENT '客户电话记录数', `visitcount` int(11) DEFAULT '0' COMMENT '客户拜访记录数', `traincount` int(11) NOT NULL COMMENT '客户培训记录数', `comnitcount` int(11) NOT NULL DEFAULT '0' COMMENT '业务沟通数量', `custype` int(11) DEFAULT '1' COMMENT '1=新客户 2=老客户', `newdata` tinyint(1) NOT NULL COMMENT '是否为新导入数据：0否，1是', `sea_push` tinyint(1) NOT NULL COMMENT '是否为公海推送：0否、1是', `throw_reason` tinyint(2) NOT NULL COMMENT '扔掉原因:0无、1客户不存在/名称错误、2绕不到电话/联系不上、3客户强烈不需要、4已使用别家产品、5已用本公司产品', `operate_id` int(11) NOT NULL, `level_op` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '¿Í»§µÈ¼¶ 0 ³õÊ¼, 1 A, 2 B, 3 C, 4 D, 5 E ', `status_op` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT 'ÔËÎ¬¸ú½ø×´Ì¬ 1 ÒÑÇ©ÒÑ»Ø, 2 ÒÑÇ©ÔÚÍ¾, 3 ÖØµã¸ú½ø, 4 ÄÜÇ©ÄÜ»Ø, 5 Òµ¼¨³å»÷, 6 ÒÑËÀ¿Í»§', `isparticiple` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否分词 1是 0否', `renew` tinyint(1) NOT NULL COMMENT '0是非续签客户，1是续签客户', `areaid` int(11) NOT NULL COMMENT '成单确认回款时客户所在区域', `renew_uid` int(11) NOT NULL COMMENT '谁分配的续签', `renew_time` datetime NOT NULL COMMENT '最近一次分配续签时间', `renew_ownerid` int(11) NOT NULL COMMENT '最近一次分配的续签业务员', `renew_mylevel` varchar(30) NOT NULL COMMENT '续签个人评级', `renew_managerlevel` varchar(10) NOT NULL COMMENT '续签经理评级', `renew_is_config` tinyint(1) NOT NULL COMMENT '是否有续签配置', `last_action_time` int(11) NOT NULL COMMENT '最后联系时间', `next_time` datetime NOT NULL COMMENT '下次联系时间', `contractEnd` date NOT NULL COMMENT '最近的合同结束日期', `end_day` int(8) NOT NULL COMMENT '合同过期天数', `linkstatus` varchar(50) NOT NULL COMMENT '最新的联系情况', `contractAuditTime` datetime NOT NULL COMMENT '客户第一个合同审核通过的时间', `follow_type` tinyint(1) DEFAULT '-1' COMMENT '最新的跟进状态,-1表示未加入理单，0待理单、1已签已回、2重点跟进、3能签能回、4冲击客户、5已死客户', `source` tinyint(3) unsigned NOT NULL DEFAULT '0' COMMENT '客户来源，默认为0，1为内部运营商机客户，6为内部市场商机客户，2为外部商机客户, 3为会销, 4为已邀请未参会，5为邀请中未确认参会', `pullTime` datetime DEFAULT NULL, PRIMARY KEY (`id`), KEY `newdata` (`newdata`), KEY `cusname` (`cusname`), KEY `type` (`type`,`ownerid`), KEY `operator` (`operator`), KEY `into_time` (`into_time`), KEY `isarea` (`isarea`), KEY `linkcase` (`linkcase`), KEY `status` (`status`), KEY `operate_id` (`operate_id`), KEY `isparticiple` (`isparticiple`), KEY `idx_level_op` (`level_op`), KEY `idx_status_op` (`status_op`), KEY `renew` (`renew`), KEY `create_time` (`create_time`), KEY `next_time` (`next_time`), KEY `idx_ownerid` (`ownerid`), KEY `idx_type_renew_ownerid` (`type`,`renew_ownerid`), KEY `renew_ownerid` (`renew_ownerid`), KEY `source_idx` (`source`), FULLTEXT KEY `pinyin` (`pinyin`), FULLTEXT KEY `cusname_idx` (`cusname_idx`) ) ENGINE=MyISAM DEFAULT CHARSET=utf8 ;
+26, CREATE TABLE IF NOT EXISTS `customers_on_top` ( `cus_id` int(11) unsigned NOT NULL COMMENT '客户id', `ownerid` int(11) NOT NULL DEFAULT '0' COMMENT '客户所属业务员', `c_time` int(11) NOT NULL DEFAULT '0', PRIMARY KEY (`cus_id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+27, ALTER TABLE `customer_comment` ADD `comment_header` TEXT NOT NULL COMMENT '评论前文';
+28, CREATE TABLE IF NOT EXISTS `customer_invitation` ( `id` int(11) NOT NULL AUTO_INCREMENT COMMENT '主键id', `meeting_id` int(11) DEFAULT '0' COMMENT '会议id', `cusid` int(11) NOT NULL COMMENT '客户id', `cusname` varchar(128) NOT NULL DEFAULT '' COMMENT '客户名称', `invitation_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '邀请时间', `inviter_id` int(11) NOT NULL DEFAULT '0' COMMENT '邀请业务员id', `inviter_name` varchar(16) NOT NULL DEFAULT '' COMMENT '邀请业务员姓名', `vwar` mediumint(5) NOT NULL COMMENT '邀请战区id', `vwar_name` varchar(50) NOT NULL DEFAULT '' COMMENT '邀请战区名称', `varea` mediumint(5) NOT NULL COMMENT '邀请城市id', `varea_name` varchar(50) NOT NULL DEFAULT '' COMMENT '邀请城市名称', `is_attend` tinyint(1) NOT NULL DEFAULT '0' COMMENT '是否参加:0,未选择;1,参加;2,未参加', PRIMARY KEY (`id`), KEY `invitation_time` (`invitation_time`), KEY `meeting_id` (`meeting_id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='客户参加会议表' ;
+29, ALTER TABLE customer_open DROP COLUMN try_times;
+30, ALTER TABLE `customer_open` CHANGE `customer_id` `customer_id` int (11) unsigned NOT NULL DEFAULT '0' COMMENT '客户ID';
+31, ALTER TABLE `customer_open` CHANGE `account` `account` varchar (50) NOT NULL DEFAULT '' COMMENT '用户名';
+32, ALTER TABLE `customer_open` CHANGE `password` `password` varchar (50) NOT NULL DEFAULT '' COMMENT '密码';
+33, CREATE TABLE IF NOT EXISTS `elastic_test` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT COMMENT '自增ID', `took_time` int(11) unsigned NOT NULL COMMENT '使用时间，毫秒', `keyword` varchar(2000) NOT NULL COMMENT '关键词', `ctime` datetime NOT NULL COMMENT '执行时间', `content` varchar(5000) NOT NULL COMMENT '内容', `type` smallint(6) unsigned NOT NULL DEFAULT '0' COMMENT '0-查询结果集；1-总执行时间；2-单次插入时间；3-max_cusid', PRIMARY KEY (`id`), KEY `ctime` (`ctime`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='elasticsearch测试表' ;
+34, ALTER TABLE `invoice` CHANGE `invoice_total` `invoice_total` decimal (10,2) NOT NULL COMMENT '发票总额';
+35, ALTER TABLE `invoice_contract_bind` CHANGE `invoiced_money` `invoiced_money` decimal (10,2) unsigned NOT NULL DEFAULT '0.00' COMMENT '开票金额';
+36, CREATE TABLE IF NOT EXISTS `meeting` ( `id` int(11) NOT NULL AUTO_INCREMENT, `confid` varchar(100) DEFAULT NULL COMMENT '会议Id', `voiptoconfid` varchar(100) DEFAULT NULL COMMENT '直呼加入的会议Id', `password` varchar(100) DEFAULT NULL COMMENT '创建会议自动生成密码时返回密码', `day` int(11) DEFAULT '0', `month` int(11) DEFAULT '0', `ctime` datetime DEFAULT NULL, `res` text NOT NULL, `dismiss_time` datetime NOT NULL COMMENT '会议解散时间', `dismiss_res` text NOT NULL COMMENT '解散会议返回结果', PRIMARY KEY (`id`), UNIQUE KEY `id` (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ;
+37, CREATE TABLE IF NOT EXISTS `meeting_parti` ( `id` int(11) NOT NULL AUTO_INCREMENT, `record_id` int(11) NOT NULL COMMENT 'meeting_record表的id', `confid` varchar(100) NOT NULL DEFAULT '0' COMMENT '会议id', `callsid` varchar(100) NOT NULL COMMENT '加入会议时返回的callid', `orderid` varchar(100) NOT NULL COMMENT '加入会议时返回的orderid', `uid` int(100) NOT NULL DEFAULT '0' COMMENT '会议参与者id', `type` tinyint(2) NOT NULL COMMENT '参与人类型 0：发起人，1：下属，2：客户联系人', `tel` varchar(11) NOT NULL COMMENT '参与者电话', `ctime` datetime NOT NULL COMMENT '加入时间', `quit_time` datetime NOT NULL COMMENT '退出会议时间', `call_status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '呼叫状态 0：通话结束， 1：通话中', `call_result` tinyint(1) NOT NULL DEFAULT '0' COMMENT '呼叫结果，0 成功，1未接听，2失败', `status_time` datetime DEFAULT NULL COMMENT '状态对应时间', PRIMARY KEY (`id`), UNIQUE KEY `id` (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ;
+38, CREATE TABLE IF NOT EXISTS `meeting_record` ( `id` int(11) NOT NULL AUTO_INCREMENT, `confid` varchar(100) NOT NULL COMMENT '会议id', `subject` varchar(100) NOT NULL COMMENT '主题', `ctime` datetime NOT NULL, `dismiss_time` datetime NOT NULL COMMENT '解散会议时间', `recordurl` varchar(255) DEFAULT NULL COMMENT '会议录音地址', `oss_recordurl` varchar(255) DEFAULT NULL COMMENT '转存到oss的录音地址', `oss_times` int(11) DEFAULT '0' COMMENT '向oss转存的次数，大于3次时不再进行转存服务', `recordduration` int(11) NOT NULL COMMENT '会议时长', PRIMARY KEY (`id`), UNIQUE KEY `id` (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ;
+39, CREATE TABLE IF NOT EXISTS `month_ids` ( `id` int(11) NOT NULL AUTO_INCREMENT, `month` int(10) NOT NULL, `throw_id` int(11) NOT NULL DEFAULT '0', `return_id` int(11) NOT NULL DEFAULT '0', `contract_id` int(11) NOT NULL DEFAULT '0', `call_id` int(11) NOT NULL DEFAULT '0', `visit_id` int(11) NOT NULL DEFAULT '0', PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='月初ID记录表' ;
+40, CREATE TABLE IF NOT EXISTS `oms_data_date` ( `project_id` int(11) DEFAULT NULL COMMENT '引用项目id', `project_date` date DEFAULT NULL COMMENT '项目日期', UNIQUE KEY `project_date` (`project_date`,`project_id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='OMS数据项目配置时间表';
+41, CREATE TABLE IF NOT EXISTS `oms_data_project` ( `id` int(11) NOT NULL AUTO_INCREMENT, `title` varchar(100) DEFAULT NULL, `start_date` date DEFAULT NULL, `end_date` date DEFAULT NULL, `project_date_str` varchar(100) DEFAULT NULL COMMENT '日期', `project_time` tinyint(4) DEFAULT NULL COMMENT '时间类型', `is_edit` tinyint(4) DEFAULT '0' COMMENT '是否可以编辑,1:是,0:否', `is_show_mobile` tinyint(4) DEFAULT '0' COMMENT '是否在手机上显示,1:是,0:否', `create_staff_id` int(11) DEFAULT NULL, `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP, `is_fixed` tinyint(4) DEFAULT '0' COMMENT '是否是所有显示 1:是 0:否', PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='OMS数据项目配置表' ;
+42, CREATE TABLE IF NOT EXISTS `oms_data_record` ( `id` int(10) unsigned NOT NULL AUTO_INCREMENT, `staff_id` int(11) DEFAULT NULL COMMENT '员工编号', `project_id` int(11) DEFAULT NULL COMMENT '项目编号', `vwar_id` int(11) DEFAULT NULL COMMENT '员工所在战区', `val` int(11) DEFAULT NULL COMMENT '填写的值', `create_time` int(11) NOT NULL, `day` date NOT NULL, PRIMARY KEY (`id`), UNIQUE KEY `project_idx` (`project_id`,`vwar_id`,`day`,`staff_id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='OMS数据项目时间记录表' ;
+43, ALTER TABLE `open_apply` ADD `open_status` TINYINT (4) NOT NULL DEFAULT '-127' COMMENT '开户返回的状态码';
+44, ALTER TABLE `open_apply` ADD `open_msg` VARCHAR (100) NOT NULL DEFAULT '';
+45, ALTER TABLE open_apply DROP COLUMN try_th;
+46, ALTER TABLE phonebook ADD FULLTEXT linkman_idx (linkman_idx);
+47, ALTER TABLE `report_cache_stuff` CHANGE `yeji` `yeji` decimal (10,2) NOT NULL COMMENT '业绩';
+48, ALTER TABLE `returnedmoney` CHANGE `money` `money` DECIMAL (10,2) DEFAULT '0.00' COMMENT '回款金额';
+49, ALTER TABLE `returnedmoney` CHANGE `newmoney` `newmoney` DECIMAL (10,2) NOT NULL DEFAULT '0.00';
+50, ALTER TABLE `returnedmoney` CHANGE `remoney` `remoney` decimal (10,2) NOT NULL DEFAULT '0.00';
+51, ALTER TABLE `returnedmoney` CHANGE `devmoney` `devmoney` decimal (10,2) NOT NULL DEFAULT '0.00';
+52, CREATE TABLE IF NOT EXISTS `slavecheck` ( `id` int(11) NOT NULL AUTO_INCREMENT, `slave_ip` varchar(20) NOT NULL COMMENT '从服务器IP', `lastupdatetimestamp` datetime NOT NULL, PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COMMENT='检查主从同步状态表' ;
+53, ALTER TABLE `target` CHANGE `money` `money` decimal (10,2) NOT NULL DEFAULT '0.00' COMMENT '目标金额';
+54, ALTER TABLE `target_month_department` CHANGE `money` `money` decimal (10,2) NOT NULL DEFAULT '0.00' COMMENT '目标金额';
+55, ALTER TABLE `target_month_department` CHANGE `assess` `assess` decimal (10,2) NOT NULL DEFAULT '0.00' COMMENT '考核值';
+56, CREATE TABLE IF NOT EXISTS `tel_code` ( `id` int(11) unsigned NOT NULL AUTO_INCREMENT, `tel` varchar(20) NOT NULL DEFAULT '' COMMENT '电话号码', `tel_code` varchar(20) NOT NULL DEFAULT '' COMMENT '验证码', `send_time` int(11) NOT NULL DEFAULT '0' COMMENT '发送时间', `user_id` int(11) NOT NULL DEFAULT '0', `send_result` int(11) NOT NULL DEFAULT '1' COMMENT '发送结果 1成功 -1失败', PRIMARY KEY (`id`) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ;
+57, ALTER TABLE `users` CHANGE `sex` `sex` INT (1) DEFAULT NULL;
+58, ALTER TABLE `users` ADD `update_phone_time` INT (11) NOT NULL DEFAULT '0' COMMENT '电话字段更新时间';
+59, ALTER TABLE `users` ADD `token` VARCHAR (255) DEFAULT NULL COMMENT '返回给客户端TOKEN登入识别码';
+60, ALTER TABLE `users` ADD `token_time` DATETIME DEFAULT NULL COMMENT 'TOKEN存入时间';
+61, ALTER TABLE `users` ADD `is_owner` TINYINT (3) UNSIGNED NOT NULL DEFAULT '0' COMMENT '是否是大区或城市或战区负责人，1代表是，其他情况以及其他职位统统为0';
+62, ALTER TABLE `users` ADD `hr_staff_id` INT (11) NOT NULL DEFAULT '0' COMMENT 'HR系统STAFF的ID';
+63, ALTER TABLE `users` CHANGE `city` `city` int (11) NOT NULL DEFAULT '0' COMMENT '大区(这个是area意思反了，凑合用)';
+64, ALTER TABLE `users` CHANGE `dimiss_time` `dimiss_time` datetime DEFAULT NULL COMMENT '离职日期';
+65, ALTER TABLE `users` CHANGE `customer_limit` `customer_limit` int (11) NOT NULL DEFAULT '0' COMMENT '客户池数量';
+66, ALTER TABLE `users` CHANGE `staging` `staging` varchar (20) DEFAULT '' COMMENT '待发布版本号,用户在登录后需要跳转到该版本对应的系统';
+67, ALTER TABLE `users` CHANGE `role_id` `role_id` int (11) DEFAULT '0' COMMENT '角色ID';
+69, ALTER TABLE `visitrecord` ADD `start_lon_bd09` VARCHAR (90) NOT NULL DEFAULT '' COMMENT '百度地图经纬度';
+70, ALTER TABLE `visitrecord` ADD `start_lat_bd09` VARCHAR (90) NOT NULL DEFAULT '' COMMENT '百度地图经纬度';
+71, ALTER TABLE `visitrecord` ADD `end_lon_bd09` VARCHAR (90) NOT NULL DEFAULT '' COMMENT '百度地图经纬度';
+72, ALTER TABLE `visitrecord` ADD `end_lat_bd09` VARCHAR (90) NOT NULL DEFAULT '' COMMENT '百度地图经纬度';
+73, ALTER TABLE `visitrecord` ADD `next_time` DATETIME DEFAULT NULL;
+74, ALTER TABLE `visitrecord` ADD `next_address` VARCHAR (255) DEFAULT NULL;
+75, ALTER TABLE `invoice` ENGINE = InnoDB;
+76, ALTER TABLE `invoice_contract_bind` ENGINE = InnoDB;
+77, ALTER TABLE `invoice_pro` ENGINE = InnoDB;
+78, ALTER TABLE `omslogs` ENGINE = InnoDB;
+79, ALTER TABLE `returnedmoney` ENGINE = InnoDB;
+80, ALTER TABLE `contracts` ENGINE = InnoDB;
+81, ALTER TABLE `callrecord` ENGINE = InnoDB;
+82, ALTER TABLE `contract_money` CHANGE `returndate` `returndate` DATETIME NOT NULL COMMENT '回款日期';
