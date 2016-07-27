@@ -15,8 +15,8 @@ use app\models\mysqlAna;
 
 class MysqlAnalyse extends Model
 {
-	public $newSql;
-	public $oldSql;
+	public $newSql = "../oms4.sql";
+	public $oldSql = "../oms4-local.sql";
 	public $submit;
 
 	public function rules()
@@ -25,6 +25,10 @@ class MysqlAnalyse extends Model
 			[['newSql'], 'file', 'skipOnEmpty' => false, 'extensions' => 'sql'],
 			[['oldSql'], 'file', 'skipOnEmpty' => false, 'extensions' => 'sql'],
 		];
+	}
+
+	public function getSqlFileNames(){
+		return array("old"=>basename($this->oldSql),"new"=>basename($this->newSql));
 	}
 
 	public function upload()
@@ -40,15 +44,15 @@ class MysqlAnalyse extends Model
 
 	public function getTableList(){
 		header("content-type:text/html;charset=utf8;");
-		$src = file_get_contents("../oms4.sql");
-		$target = file_get_contents("../oms4-local.sql");
+		$src = file_get_contents($this->newSql);
+		$target = file_get_contents($this->oldSql);
 
 		$ss = new mysqlAna();
 		$ss->initTables($src);
 		$tt = new mysqlAna();
 		$tt->initTables($target);
 		$differences = $this->analyseDiff($ss->getTables(),$tt->getTables());
-		var_dump($differences);
+//		var_dump($differences);
 		$result = array();
 		$num = 0;
 		foreach($differences as $key=>$difference){
@@ -62,7 +66,7 @@ class MysqlAnalyse extends Model
 							$item['number'] = $num;
 							$item['type'] = $key;
 							$item['name'] = $tableName;
-							$item['status'] = "正常";
+							$item['status'] = "-";
 							$item['sqlQuery'] = $sqlQueryItem;
 							$result[] = $item;
 						}
@@ -78,7 +82,7 @@ class MysqlAnalyse extends Model
 									$item['number'] = $num;
 									$item['type'] = $modifiedKey;
 									$item['name'] = $tableName;
-									$item['status'] = "正常";
+									$item['status'] = "-";
 									$item['sqlQuery'] = $sqlQueryItem;
 									$result[] = $item;
 								}
@@ -92,7 +96,7 @@ class MysqlAnalyse extends Model
 									$item['number'] = $num;
 									$item['type'] = $modifiedKey;
 									$item['name'] = $tableName;
-									$item['status'] = "正常";
+									$item['status'] = "-";
 									$item['sqlQuery'] = $sqlQueryItem;
 									$result[] = $item;
 								}

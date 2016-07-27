@@ -20,7 +20,8 @@ class MysqlanalyseController extends Controller
 //            return $this->render("index",["model"=>$model,"test"=>222]);
 //        }
         $tableList = $model->getTableList();
-        return $this->render('index', ["tableList" => $tableList,"model"=>$model]);
+        $fileNames = $model->getSqlFileNames();
+        return $this->render('index', ["tableList" => $tableList,"fileName"=>$fileNames,"model"=>$model]);
     }
     public function actionUpload()
     {

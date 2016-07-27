@@ -25,6 +25,7 @@ if(isset($test)){
 </div>
 
 <div id="container" class="container">
+    <div><p>新数据:<?php echo $fileName['new'];?>,旧数据:<?php echo $fileName['old'];?></p></div>
         <?php
         if(!empty($tableList)){
         ?>
@@ -44,7 +45,7 @@ if(isset($test)){
                             类别
                         </th>
                         <th>
-                            名称
+                            表名
                         </th>
                         <th>
                             状态
