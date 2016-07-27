@@ -6,7 +6,7 @@ use yii\widgets\ActiveForm;
 $this->title = '数据库差异检测工具';
 $this->params['breadcrumbs'][] = ['label' => '检测工具', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
-if(isset($test)){
+if(isset($test)&&$test!=''){
     echo $test;
 }
 ?>

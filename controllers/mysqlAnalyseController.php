@@ -21,7 +21,11 @@ class MysqlanalyseController extends Controller
 //        }
         $tableList = $model->getTableList();
         $fileNames = $model->getSqlFileNames();
-        return $this->render('index', ["tableList" => $tableList,"fileName"=>$fileNames,"model"=>$model]);
+        $summary = '';
+//        foreach ($tableList as $item) {
+//            $summary .= $item['sqlQuery']."<br>";
+//        }
+        return $this->render('index', ["tableList" => $tableList,"fileName"=>$fileNames,"model"=>$model,"test"=>$summary]);
     }
     public function actionUpload()
     {
