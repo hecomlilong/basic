@@ -38,6 +38,7 @@ if(isset($test)&&$test!=''){
 
                 <table class="table table-bordered table-hover" style="font-size: 12px;">
                     <thead><tr>
+                        <th></th>
                         <th>
                             序号
                         </th>
@@ -51,33 +52,92 @@ if(isset($test)&&$test!=''){
                             状态
                         </th>
                         <th>
-                            sql语句
+                            sql语句预览
                         </th>
-                        <th>
-                            操作
-                        </th>
+<!--                        <th>-->
+<!--                            操作-->
+<!--                        </th>-->
                     </tr></thead>
                     <tbody>
 
                     <?php if(is_array($tableList)){ foreach ($tableList as $v) { ?>
                     <tr>
+                        <td >
+                            <input type="checkbox" value="<?php echo $v['number']?>" name="<?php echo $v['number']?>" id="<?php echo $v['number']?>" /> &nbsp;&nbsp;
+                            <button type="button" class="btn btn-danger btn-xs" value="生成脚本!" onClick="createSql('<?php echo $v['number']?>')">
+                                <span class="glyphicon glyphicon-fire"></span> 生成脚本!
+                            </button>
+                        </td>
                         <td><?php echo $v['number'];?></td>
                         <td><?php echo $v['type']?></td>
                         <td><?php echo $v['name']?></td>
                         <td><?php echo $v['status']?></td>
-                        <td><?php echo $v['sqlQuery']?></td>
-                        <td><a data-target="#detailModal" data-toggle="modal" href="#" class='btn btn-xs btn-primary'><span class='glyphicon glyphicon-book'></span>执行</a></td>
+                        <td id="sql<?php echo $v['number'];?>"><?php echo $v['sqlQuery']?></td>
+<!--                        <td><a data-target="#detailModal" data-toggle="modal" href="#" class='btn btn-xs btn-primary'><span class='glyphicon glyphicon-book'></span>执行</a></td>-->
                         <?php }}?>
                     </tr>
 <!--                    <tr>-->
 <!--                        <td  style="text-align:right" colspan='6'>--><?php //echo $pager;?><!--</td>-->
 <!--                    </tr>-->
+                    <tr>
+                        <td>
+                            <input type="checkbox" value="全选" name="selectAll" id="0" onclick="check(this)" />
+                            <button type="button" class="btn btn-danger btn-sm" value="生成脚本" onClick="createSql(0)">
+                                <span class="glyphicon glyphicon-fire"></span> 生成脚本
+                                <!--<span class="glyphicon glyphicon-fire"></span> 扔到开放池!-->
+                            </button>
+                        </td>
+                        <td  colspan='5' style="text-align: right">
+                        </td>
+                    </tr>
                     </tbody>
                 </table>
-
+                <div class="panel">
+                    <div id="summaryResult"></div>
+                </div>
             </div>
+
         </div>
         <?php
     }
     ?>
 </div>
+<script type="text/javascript">
+    function createSql(number){
+        if(number==0){
+            var allCheck = document.getElementsByTagName("input");
+            var summaryStr="";
+            for(var i = 0; i < allCheck.length; i++){
+                if( allCheck[i].type=="checkbox"){
+                    if( allCheck[i].checked && allCheck[i].id > 0){
+                        summaryStr += $("#sql"+allCheck[i].id).text()+"<br>";
+                    }
+                }
+            }
+            $("#summaryResult").html(summaryStr);
+        }else{
+            $("#summaryResult").html($("#sql"+number).text());
+        }
+    }
+    function check(obj) //全选
+    {
+        var allCheck = document.getElementsByTagName("input");
+        if (obj.checked) {
+            for (var i = 0; i < allCheck.length; i++) {
+                if (allCheck[i].type == "checkbox") {
+                    if (allCheck[i].id > 0) {
+                        allCheck[i].checked=true;
+                    }
+                }
+            }
+        }else{
+            for (var i = 0; i < allCheck.length; i++) {
+                if (allCheck[i].type == "checkbox") {
+                    if (allCheck[i].id > 0) {
+                        allCheck[i].checked=false;
+                    }
+                }
+            }
+        }
+    }
+</script>
