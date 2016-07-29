@@ -57,6 +57,9 @@ if(isset($test)&&$test!=''){
 <!--                        <th>-->
 <!--                            操作-->
 <!--                        </th>-->
+                        <th>
+                            备注
+                        </th>
                     </tr></thead>
                     <tbody>
 
@@ -74,6 +77,7 @@ if(isset($test)&&$test!=''){
                         <td><?php echo $v['status']?></td>
                         <td id="sql<?php echo $v['number'];?>"><?php echo $v['sqlQuery']?></td>
 <!--                        <td><a data-target="#detailModal" data-toggle="modal" href="#" class='btn btn-xs btn-primary'><span class='glyphicon glyphicon-book'></span>执行</a></td>-->
+                        <td><?php echo $v['note']?></td>
                         <?php }}?>
                     </tr>
 <!--                    <tr>-->
@@ -87,14 +91,11 @@ if(isset($test)&&$test!=''){
                                 <!--<span class="glyphicon glyphicon-fire"></span> 扔到开放池!-->
                             </button>
                         </td>
-                        <td  colspan='5' style="text-align: right">
+                        <td  colspan='5' style="text-align: left" id="summaryResult">
                         </td>
                     </tr>
                     </tbody>
                 </table>
-                <div class="panel">
-                    <div id="summaryResult"></div>
-                </div>
             </div>
 
         </div>

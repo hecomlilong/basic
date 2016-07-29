@@ -148,7 +148,7 @@ class mysqlAna extends Model
 		$line = array_pop($lines);
 		$line = trim($line,") ;");
 		$properties = explode(" ",$line);
-		$properties = $this->mergeComments($properties);
+		$properties = $this->merge($properties,"COMMENT");
 		foreach ($properties as $property) {
 			$res = explode("=",$property);
 			if(count($res)>1){
@@ -176,7 +176,8 @@ class mysqlAna extends Model
 		if($poss!==false&&$pose!==false) {
 			$strBehind = trim(trim(substr($line, $pose + 1)), ",");
 			$res = explode(" ", $strBehind);
-			$res = $this->mergeComments($res);
+			$res = $this->merge($res, "COMMENT");
+			$res = $this->merge($res, "DEFAULT");
 			$preKeyword = '';
 			$multiKeyIterator = 0;
 			$multiKeyPartiallyMatches = array();
@@ -275,14 +276,14 @@ class mysqlAna extends Model
 		return '';
 	}
 
-	public function mergeComments($wordsArr){
+	public function merge($wordsArr, $type){
 		if(is_array($wordsArr)){
 			$needToMerge = array();
-			$commentStart = false;
+			$typeStart = false;
 			$mergedIndex = 0;
 			$needToDelete = array();
 			foreach ($wordsArr as $key=>$word) {
-				if($commentStart){
+				if($typeStart){
 					if(!in_array($word,$this->keys)){
 						$needToMerge[] = $word;
 						if($mergedIndex < $key) {
@@ -292,8 +293,8 @@ class mysqlAna extends Model
 						break;
 					}
 				}
-				if($word=="COMMENT"){
-					$commentStart = true;
+				if($word==$type){
+					$typeStart = true;
 					$mergedIndex = $key + 1;
 				}
 			}

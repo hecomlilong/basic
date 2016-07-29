@@ -81,7 +81,7 @@ Ground-truth
 61, ALTER TABLE `users` ADD `is_owner` TINYINT (3) UNSIGNED NOT NULL DEFAULT '0' COMMENT '是否是大区或城市或战区负责人，1代表是，其他情况以及其他职位统统为0';
 62, ALTER TABLE `users` ADD `hr_staff_id` INT (11) NOT NULL DEFAULT '0' COMMENT 'HR系统STAFF的ID';
 63, ALTER TABLE `users` CHANGE `city` `city` int (11) NOT NULL DEFAULT '0' COMMENT '大区(这个是area意思反了，凑合用)';
-64, ALTER TABLE `users` CHANGE `dimiss_time` `dimiss_time` datetime DEFAULT NULL COMMENT '离职日期';
+64, ALTER TABLE `users` CHANGE `dimiss_time` `dimiss_time` DATETIME DEFAULT '0000-00-00 00:00:00' COMMENT '离职日期';
 65, ALTER TABLE `users` CHANGE `customer_limit` `customer_limit` int (11) NOT NULL DEFAULT '0' COMMENT '客户池数量';
 66, ALTER TABLE `users` CHANGE `staging` `staging` varchar (20) DEFAULT '' COMMENT '待发布版本号,用户在登录后需要跳转到该版本对应的系统';
 67, ALTER TABLE `users` CHANGE `role_id` `role_id` int (11) DEFAULT '0' COMMENT '角色ID';
