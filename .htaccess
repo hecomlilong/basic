@@ -1,5 +1,29 @@
-RewriteEngine off
-# If a directory or a file exists, use it directly RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteEngine on
+## If a directory or a file exists, use it directly RewriteCond %{REQUEST_FILENAME} !-f
+#RewriteCond %{REQUEST_FILENAME} !-d
+## Otherwise forward it to index.php
+#RewriteRule . web/index.php
+
+#RewriteCond $1 !^(index\.php|userpics|phpexcel|images|do_not_delete|server_status|fonts|video|staging|tmp|dashboardcache|js|css|template|aliyun\.html|webscan_360_cn\.html|robots\.txt)
+#RewriteRule ^(.*)$ /omsagent/index.php/$1 [L]
+#php_value upload_max_filesize 30M
+#php_value post_max_size 30M
+
+#RewriteEngine On
+#RewriteRule ^$ web/
+#RewriteCond %{REQUEST_FILENAME} !–f
+#RewriteCond %{REQUEST_FILENAME} !–d
+#RewriteRule ^(.*)$ web/$1
+
+
+RewriteEngine on
+#RewriteCond %{REQUEST_URI} ^/(assets|css|js|ember)
+#RewriteRule ^assets/(.*)$ web/assets/$1 [L]
+#RewriteRule ^css/(.*)$ web/css/$1 [L]
+#RewriteRule ^js/(.*)$ web/js/$1 [L]
+#RewriteRule ^ember/(.*)$ web/ember/$1 [L]
+RewriteCond %{REQUEST_URI} !^/web/(assets|css|js|ember)/
+RewriteCond %{REQUEST_URI} !index.php
+RewriteCond %{REQUEST_FILENAME} !-f [OR]
 RewriteCond %{REQUEST_FILENAME} !-d
-# Otherwise forward it to index.php
-RewriteRule . web/index.php
+RewriteRule ^(.*)$ web/index.php/$1 [L,QSA]

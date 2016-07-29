@@ -38,15 +38,15 @@ $config = [
             ],
         ],
         'db' => require(__DIR__ . '/db.php'),
-//        'urlManager' => [
-//            'enablePrettyUrl' => true,
-//            'showScriptName' => false,
-//            'rules' => [
-//                'dashboard' => 'site/index',
-//                'news1/<year:\d{4}>/items-list' => 'news1/items-list',
-//                 'news1/<category:\w+>/items-list' => 'test-rules/items-list',
-//            ],
-//        ],
+        'urlManager' => [
+            'enablePrettyUrl' => true,
+            'showScriptName' => false,
+            'rules' => [
+                'dashboard' => 'site/index',
+                'news1/<year:\d{4}>/items-list' => 'news1/items-list',
+                 'news1/<category:\w+>/items-list' => 'test-rules/items-list',
+            ],
+        ],
     ],
     'params' => $params,
 ];
