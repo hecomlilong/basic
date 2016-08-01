@@ -20,6 +20,13 @@ class MysqlAnalyse extends Model
 	public $submit;
 	public $typeMap = array("newProperties"=>"增加属性","deletedProperties"=>"删除属性","modifiedProperties"=>"修改属性");
 
+	public function __construct(array $config)
+	{
+		$this->oldSql = $config['oldSql'];
+		$this->newSql = $config['newSql'];
+		parent::__construct($config);
+	}
+
 	public function rules()
 	{
 		return [

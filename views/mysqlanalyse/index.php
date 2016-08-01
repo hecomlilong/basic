@@ -10,25 +10,27 @@ if(isset($test)&&$test!=''){
     echo $test;
 }
 ?>
-<h1>数据库差异检测工具</h1>
 <div class="container">
-    <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data','class' => 'form-horizontal']]) ?>
-    <?= $form->field($model, 'newSql')->fileInput() ?>
-    <?= $form->field($model, 'oldSql')->fileInput() ?>
-    <div class="form-group">
-        <div class="col-lg-offset-1 col-lg-11">
-            <?= Html::submitButton('提交', ['class' => 'btn btn-primary', 'name' => 'submit-button']) ?>
+    <?php $form = ActiveForm::begin(['options' => ['enctype' => 'multipart/form-data']]); ?>
+    <div class="row">
+        <div class="col-lg-12">
+            <h1>数据库差异检测工具</h1>
+
+            <?= $form->field($model, 'oldSql')->fileInput() ?>
+            <?= $form->field($model, 'newSql')->fileInput() ?>
         </div>
     </div>
-
-    <?php ActiveForm::end() ?>
+    <div class="form-group">
+        <?= Html::submitButton('提交' , ['class' => 'btn btn-success']) ?>
+    </div>
+    <?php ActiveForm::end(); ?>
 </div>
-
+<?php
+if(isset($tableList)&&!empty($tableList)){
+?>
 <div id="container" class="container">
     <div><p>新数据:<?php echo $fileName['new'];?>,旧数据:<?php echo $fileName['old'];?></p></div>
-        <?php
-        if(!empty($tableList)){
-        ?>
+
 
         <div style="margin-top: 10px;">
             <div class="panel panel-primary">
@@ -99,10 +101,11 @@ if(isset($test)&&$test!=''){
             </div>
 
         </div>
-        <?php
-    }
-    ?>
+
 </div>
+    <?php
+}
+?>
 <script type="text/javascript">
     function createSql(number){
         if(number==0){

@@ -63,14 +63,14 @@ $backgroundColor = isset($this->params['background_color'])?$this->params['backg
         <?= Breadcrumbs::widget([
             'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
         ]) ?>
-        <div class="well">
-            This is content for blockADV from view
-            <br />
-            <?php if(isset($this->blocks['blockADV'])) { ?>
-                <?php echo $this->blocks['blockADV']; ?>
-            <?php } else { ?>
-                <i>No content available</i> <?php } ?>
-        </div>
+<!--        <div class="well">-->
+<!--            This is content for blockADV from view-->
+<!--            <br />-->
+<!--            --><?php //if(isset($this->blocks['blockADV'])) { ?>
+<!--                --><?php //echo $this->blocks['blockADV']; ?>
+<!--            --><?php //} else { ?>
+<!--                <i>No content available</i> --><?php //} ?>
+<!--        </div>-->
         <?= $content ?>
     </div>
 </div>

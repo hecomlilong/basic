@@ -1,6 +1,7 @@
 <?php
 
 namespace app\controllers;
+use app\models\SqlData;
 use Yii;
 use app\models\MysqlAnalyse;
 use yii\web\Controller;
@@ -11,21 +12,40 @@ class MysqlanalyseController extends Controller
 {
     public function actionIndex()
     {
-        $model = new MysqlAnalyse();
-//        if ($model->load(Yii::$app->request->post())&&$model->validate()) {
-//
-//            var_dump($model->newSql);exit;
-//            return $this->render('index', ["tableList" => $tableList,"model"=>$model,"test"=>123]);
-//        }else{
-//            return $this->render("index",["model"=>$model,"test"=>222]);
-//        }
-        $tableList = $model->getTableList();
-        $fileNames = $model->getSqlFileNames();
-        $summary = '';
-//        foreach ($tableList as $item) {
-//            $summary .= $item['sqlQuery']."<br>";
-//        }
-        return $this->render('index', ["tableList" => $tableList,"fileName"=>$fileNames,"model"=>$model,"test"=>$summary]);
+        Yii::setAlias('@sql_data_dir', '@app/upload/sql/');
+
+        $model = new SqlData();
+        $modelCanSave = false;
+        $tableList = '';
+        $fileNames = '';
+
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $model->oldSql = UploadedFile::getInstance($model,'oldSql');
+            $model->newSql = UploadedFile::getInstance($model,'newSql');
+            if ($model->oldSql)
+            {
+                $model->oldSql->saveAs(Yii::getAlias('@sql_data_dir') . $model->oldSql);
+            }
+            if ($model->newSql)
+            {
+                $model->newSql->saveAs(Yii::getAlias('@sql_data_dir') . $model->newSql);
+            }
+            if ($model->oldSql&&$model->newSql) {
+                $modelCanSave = true;
+            }
+        }
+        if($modelCanSave) {
+            $modelAnalyse = new MysqlAnalyse(
+                array(
+                    "oldSql"=>Yii::getAlias('@sql_data_dir') . $model->oldSql,
+                    "newSql"=>Yii::getAlias('@sql_data_dir') . $model->newSql
+                )
+            );
+
+            $tableList = $modelAnalyse->getTableList();
+            $fileNames = $modelAnalyse->getSqlFileNames();
+        }
+        return $this->render('index', ["tableList" => $tableList,"fileName"=>$fileNames,"model"=>$model,"modelCanSave"=>$modelCanSave]);
     }
     public function actionUpload()
     {
