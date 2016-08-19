@@ -54,13 +54,12 @@ class MysqlAnalyse extends Model
 		header("content-type:text/html;charset=utf8;");
 		$src = file_get_contents($this->newSql);
 		$target = file_get_contents($this->oldSql);
-
 		$ss = new mysqlAna();
 		$ss->initTables($src);
 		$tt = new mysqlAna();
 		$tt->initTables($target);
 		$differences = $this->analyseDiff($ss->getTables(),$tt->getTables());
-		// var_dump($differences);
+//		 var_dump($differences);
 		$result = array();
 		$num = 0;
 		foreach($differences as $key=>$difference){
@@ -358,7 +357,11 @@ class MysqlAnalyse extends Model
 					if(count($indexArr)>0){
 						foreach($indexArr as $indexName=>$value){
 							if(isset($value['field'])) {
-								$fields = implode(",", $value['field']);
+								if(is_array($value['field'])) {
+									$fields = implode(",", $value['field']);
+								}elseif(is_string($value['field'])){
+									$fields = $value['field'];
+								}
 								$indexType = isset($value['properties'])? $value['properties']:"INDEX";
 								if($indexType=='PRIMARY'){
 									$indexType .= " KEY";

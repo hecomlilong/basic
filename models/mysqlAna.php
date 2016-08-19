@@ -92,11 +92,11 @@ class mysqlAna extends Model
 	public function getTables(){
 		return $this->tables;
 	}
-	public function getTableName($subject){
+	public function getTableName($subject,$caseSensitive=false){
 		$pattern = '/(?<=\`)[^`]\w*(?=\`)/';
 		preg_match($pattern, $subject, $matches, PREG_OFFSET_CAPTURE);
 		if(count($matches)>0) {
-			return $matches[0][0];
+			return $caseSensitive ? $matches[0][0]:strtolower($matches[0][0]);
 		}else{
 			return '';
 		}
