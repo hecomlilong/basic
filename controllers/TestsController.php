@@ -12,12 +12,15 @@ use app\models\StockInfo;
 use app\models\DailyTransaction;
 use common\helpers\DateHelper;
 use yii\helpers\ArrayHelper;
+use PythonBase;
 
 class TestsController extends \yii\web\Controller
 {
     public function actionIndex()
     {
-        phpinfo();
+        PythonBase::get_hist_data("000607");
+//        PythonBase::yell();
+//        phpinfo();
         exit;
         var_dump($this->checkRecord("000001","2016-08-12"));exit;
         $filePath = "../yii-basic-app-2.0.9.tgz";

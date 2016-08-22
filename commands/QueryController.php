@@ -36,7 +36,7 @@ class QueryController extends Controller
 
 		$stockInfo = (ArrayHelper::getColumn(StockInfo::find()->select('code')->asArray()->all(),'code'));
 		foreach ($stockInfo as $stockCode) {
-			if($stockCode < "000707"){
+			if($stockCode < "000766"){
 				continue;
 			}
 			for($iterD=0;$iterD<=5000;$iterD++){

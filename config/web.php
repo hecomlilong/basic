@@ -2,6 +2,7 @@
 
 $params = require(__DIR__ . '/params.php');
 
+Yii::$classMap['PythonBase'] = '@app/libs/PythonBase.php';
 $config = [
     'id' => 'basic',
     'basePath' => dirname(__DIR__),
