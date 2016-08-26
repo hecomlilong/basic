@@ -9,6 +9,6 @@
 from datafetch import datafetch
 
 exa = datafetch()
-exa.get_hist_data("600848","2015-01-05","2015-01-06")
-
+exa.get_hist_data_all("M")
+#exa.get_hist_data("300543","2013-08-25","2014-08-26")
 del exa
