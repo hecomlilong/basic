@@ -9,6 +9,8 @@
 from datafetch import datafetch
 
 exa = datafetch()
-exa.get_hist_data_all("M")
+#exa.get_stock_basics()
+#exa.get_hist_data_all("M")
 #exa.get_hist_data("300543","2013-08-25","2014-08-26")
+exa.get_h_data_all()
 del exa

@@ -95,7 +95,61 @@ class datafetch:
             datetime.datetime.strptime(date_text, '%Y-%m-%d')
         except ValueError:
             raise ValueError("Incorrect data format, should be YYYY-MM-DD")
-
+    def get_stock_basics(self,option = 'append'):
+    #option = 'replace','fail','append'
+        rows = ts.get_stock_basics()
+        #cnx = self.conn.getCNX()
+        #rows.to_sql("stock_basics",cnx,flavor='mysql',if_exists=option,index=False)
+        #INSERT INTO `stock_basics` (`id`, `code`, `name`, `industry`, `area`, `pe`, `outstanding`, `totals`, `totalAssets`, `liquidAssets`, `fixedAssets`, `reserved`, `reservedPerShare`, `esp`, `bvps`, `pb`, `timeToMarket`) VALUES (NULL, '111222', '广西广电', '影视音像', '广西', '64.86', '30000', '167102.63', '557745.69', '129443.47', '285125.06', '2530.36', '0.02', '0.114', '1.58', '9.38', '20160815')
+        for j in range(len(rows.values)):
+            code = rows.index[j]
+            tt = rows.values[j]
+            sqlPre = "INSERT INTO `stock_basics` (`id`, `code`, `name`, `industry`, `area`, `pe`, `outstanding`, `totals`, `totalAssets`, `liquidAssets`, `fixedAssets`, `reserved`, `reservedPerShare`, `esp`, `bvps`, `pb`, `timeToMarket`) VALUES (NULL, '"+code;
+            for i in range(len(tt)):
+                if (type(tt[i]) == type('a')):
+                    sqlPre += "', '"+tt[i]
+                else:
+                    sqlPre += "', '"+str(tt[i])
+            sqlPre += "')"
+            self.conn.execute(sqlPre)
+            print "%d %s is added" % (j, code)
+        print "get_stock_basics executed"
+    def get_h_data(self,code = '600848', start = 0, end = 0, ktype = 'D', option = 'append'):
+        print "get %s history data from %s to %s" % (code, start,end)
+        if(start != 0 and end != 0):
+            df = ts.get_h_data(code,start=start,end=end)
+        else:
+            df = ts.get_h_data(code)
+        if df is None:
+            return
+        for j in range(len(df.values)):
+            date = df.index[j]
+            tt = df.values[j]
+            sqlPre = "insert into "+"h_data_"+ktype+" (`code`, `date`, `open`, `high`, `close`, `low`, `volume` `amount`) VALUES ('"+code+"','"+date+"',"
+            for i in range(len(tt)):
+                sqlPre += "'"+tt[i].astype("str")+"',"
+            sqlPre = sqlPre[:(len(sqlPre)-1)] + ")"
+            self.conn.execute(sqlPre)
+        #print "get_h_data executed"
+        #time.sleep(1)
+    def get_h_data_for_one(self,code,option = 'append'):
+        #option = 'replace','fail','append'
+        rows = ts.get_h_data(code)
+        cnx = self.conn.getCNX()
+        rows.to_sql("h_data_D",cnx,flavor='mysql',if_exists=option,index=False)
+        print "get_h_data_for_one executed"
+    def get_h_data_all(self, ktype = 'D', option = 'append'):
+        df = ts.get_stock_basics()
+        for i in range(len(df.index)):
+            print i
+            code = df.index[i]
+            start = df.ix[code]['timeToMarket']
+            start = datetime.datetime.strptime(str(start), "%Y%m%d").date().strftime("%Y-%m-%d")
+            end = date.today().strftime("%Y-%m-%d")
+            periods = self.get_period_array(start,end)
+            for j in range(0,len(periods),2):
+                self.get_h_data(code,periods[j].strftime("%Y-%m-%d"),periods[j+1].strftime("%Y-%m-%d"),ktype)
+        print "get_h_data_all executed"
     def __del__(self):
         del self.conn
 
